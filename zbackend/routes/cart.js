@@ -1,8 +1,6 @@
-
-
 const express = require("express");
 const routes = express.Router();
-const conn = require('../db/database');
+const db = require("../db/database"); // assuming db.js yung reusable query mo
 
 // POST: Add item to cart
 routes.post("/cartValue", async (req, res) => {
@@ -12,15 +10,18 @@ routes.post("/cartValue", async (req, res) => {
         return res.status(400).json({ message: "All fields are required" });
     }
 
-    const query = `INSERT INTO products (price, img, name, user_id, quantity) VALUES (?, ?, ?, ?, ?)`;
+    const query = `
+        INSERT INTO products (price, img, name, user_id, quantity)
+        VALUES ($1, $2, $3, $4, $5)
+    `;
     const values = [price, img, name, user_id, quantity];
 
     try {
-        await conn(query, values);
+        await db(query, values);
         res.status(200).json({ message: "Successfully inserted into database" });
-        console.log("Successfully inserted into database");
+        console.log("✅ Successfully inserted into database");
     } catch (err) {
-        console.error("Error inserting into database:", err);
+        console.error("❌ Error inserting into database:", err);
         res.status(500).json({ message: "Database error" });
     }
 });
@@ -33,18 +34,18 @@ routes.post("/deleteCartItem", async (req, res) => {
         return res.status(400).json({ success: false, message: "Missing item ID" });
     }
 
-    const query = `DELETE FROM products WHERE id = ? LIMIT 1`;
+    const query = `DELETE FROM products WHERE id = $1`;
 
     try {
-        const result = await conn(query, [id]);
+        const result = await db(query, [id]);
 
-        if (result.affectedRows === 0) {
+        if (result.length === 0) {
             return res.json({ success: false, message: "Item not found" });
         }
 
         res.json({ success: true, message: "Item deleted successfully" });
     } catch (err) {
-        console.error("Error deleting cart item:", err);
+        console.error("❌ Error deleting cart item:", err);
         res.status(500).json({ success: false, message: "Internal server error" });
     }
 });
