@@ -12,7 +12,6 @@
     "dev": "json-server --watch db.json --port 8000"
   },
   "dependencies": { 
-   
     "body-parser": "^2.2.0",
     "cookie": "^1.0.2",
     "cookie-parser": "^1.4.7",
@@ -20,7 +19,7 @@
     "express": "^5.1.0",
     "express-session": "^1.18.1",
     "fs": "^0.0.1-security",
-    "json-server": "^1.0.0-beta.3",
+  
     "mysql": "^2.18.1",
     "mysqli": "^3.1.4",
     "node-localstorage": "^3.0.5",
